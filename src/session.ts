@@ -84,6 +84,8 @@ export class WebMultiViewSession extends DurableObject<Sync> {
 
     const sender = this.users.get(data.senderId);
 
+    console.log(data, sender, this.users);
+
     if (!sender) {
       ws.send("Invalid sender");
 
@@ -151,8 +153,13 @@ export class WebMultiViewSession extends DurableObject<Sync> {
     });
 
     for (const socket of sockets) {
-      if (socket === ws) continue;
-      socket.send(JSON.stringify({ action: "over", message }));
+      socket.send(
+        JSON.stringify({
+          action: "over",
+          message,
+          active: socket !== ws,
+        })
+      );
     }
   }
 }
